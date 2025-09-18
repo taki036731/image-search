@@ -1,0 +1,32 @@
+{
+    "name": "React-Flask Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "remoteUser": "vscode",
+    //"postCreateCommand": "npx create-react-app frontend --template typescript && npm install && cd frontend && npm install",
+    //"postCreateCommand": "npm create vite@latest frontend --yes --template react-ts && cd frontend && npm install",
+    "postCreateCommand": "cd frontend && npm install",
+    "portsAttributes": {
+        "3000": {
+            "label": "React",
+            "onAutoForward": "notify"
+        },
+        "5000":{
+            "label": "Flask",
+            "onAutoForward": "notify"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "esbenp.prettier-vscode",
+                "jawandarajbir.react-vscode-extension-pack",
+                "google.gemini-cli-vscode-ide-companion",
+                "google.geminicodeassist",
+                "tuttieee.emacs-mcx"
+            ]
+        }
+    }
+}

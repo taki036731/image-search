@@ -7,8 +7,10 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSearch = async () => {
+    console.log("Search button clicked.");
     if (!query) return;
 
+    console.log(`Fetching images for query: ${query}`);
     try {
       const response = await fetch(`/api/search?query=${query}`);
       const data = await response.json();
@@ -20,28 +22,36 @@ function App() {
   };
 
   useEffect(() => {
-    console.log('useEffect called.');
-    if (images.length === 0) return;
+    console.log("useEffect called.");
+    if (images.length === 0) {
+      console.log("No images to display.");
+      return;
+    }
+
+    console.log("Setting up interval for slideshow.");
     const interval = setInterval(() => {
+      console.log("Interval triggered.");
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 3000);
+    console.log("Interval setup.");
+
     return () => {
-      console.log('useEffect cleanup.');
+      console.log("useEffect cleanup.");
       clearInterval(interval);
-    }
+    };
   }, [images]);
 
   return (
-    <div className={styles['slideshow-container']}>
-      <div className={styles['search-container']}>
+    <div className={styles["slideshow-container"]}>
+      <div className={styles["search-container"]}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for images..."
-          className={styles['search-input']}
+          className={styles["search-input"]}
         />
-        <button onClick={handleSearch} className={styles['search-button']}>
+        <button onClick={handleSearch} className={styles["search-button"]}>
           Search
         </button>
       </div>
@@ -49,7 +59,7 @@ function App() {
         <img
           src={images[currentIndex]}
           alt="Slideshow"
-          className={styles['slideshow-image']}
+          className={styles["slideshow-image"]}
         />
       )}
     </div>

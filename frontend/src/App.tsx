@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./App.css";
+import styles from "./App.module.css";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -32,21 +32,24 @@ function App() {
   }, [images]);
 
   return (
-    <div className="slideshow-container">
-      <div className="search-container">
+    <div className={styles['slideshow-container']}>
+      <div className={styles['search-container']}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for images..."
+          className={styles['search-input']}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={handleSearch} className={styles['search-button']}>
+          Search
+        </button>
       </div>
       {images.length > 0 && (
         <img
           src={images[currentIndex]}
           alt="Slideshow"
-          className="slideshow-image"
+          className={styles['slideshow-image']}
         />
       )}
     </div>

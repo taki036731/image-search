@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Flask Backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "app.py",
+        "FLASK_ENV": "development"
+      },
+      "args": ["run", "--no-debugger", "--port", "5000"],
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Launch React Frontend (Vite)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5000",
+      "webRoot": "${workspaceFolder}/frontend/dist",
+      "preLaunchTask": "npm: build:dev - frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Full Stack Application",
+      "configurations": ["Launch Flask Backend", "Launch React Frontend (Vite)"]
+    }
+  ]
+}

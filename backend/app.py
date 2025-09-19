@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify, send_from_directory, request
 from dotenv import load_dotenv
 import requests
+import concurrent.futures
 
 app = Flask(__name__, static_folder='../frontend/dist', static_url_path='')
 
@@ -20,16 +21,36 @@ def search_images():
     if not cse_id:
         return jsonify({'error': 'Google Custom Search Engine ID is missing'}), 500
     
-    url = f'https://www.googleapis.com/customsearch/v1?key={api_key}&cx={cse_id}&q={query}&searchType=image&imgSize=Huge'
+    def fetch_page(start_index):
+        """指定された開始インデックスでAPIから画像を取得する"""
+        try:
+            url = f'https://www.googleapis.com/customsearch/v1?key={api_key}&cx={cse_id}&q={query}&searchType=image&imgSize=Huge&start={start_index}'
+            response = requests.get(url, timeout=5) # タイムアウトを設定
+            response.raise_for_status()  # HTTPエラーがあれば例外を発生させる
+            data = response.json()
+            items = data.get('items', [])
+            return [item['link'] for item in items] if items else []
+        except requests.exceptions.RequestException as e:
+            # 本番環境ではloggingモジュールを使うのが望ましい
+            print(f"Error fetching page at start_index {start_index}: {e}")
+            return []
 
+    all_images = []
+    num_pages = 3
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-        images = [item['link'] for item in data.get('items', [])]
-        return jsonify({'images': images})
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 500
+        # ThreadPoolExecutorを使用して10回のリクエストを並列実行
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            start_indices = [i * 10 + 1 for i in range(num_pages)]
+            # mapを使って各start_indexに対するfetch_pageを並列実行し、結果を待つ
+            results = executor.map(fetch_page, start_indices)
+
+            for image_list in results:
+                all_images.extend(image_list)
+
+        return jsonify({'images': all_images})
+    except Exception as e:
+        # より詳細なエラーハンドリングが望ましい
+        return jsonify({'error': f"An unexpected error occurred: {str(e)}"}), 500
 
 @app.route('/', defaults={'url_path': ''})
 @app.route('/<path:url_path>')

@@ -1,21 +1,35 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./App.module.css";
 
 function App() {
   const [query, setQuery] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
+
+    // 以前の検索による進行中のfetchがあれば、それを中断します。
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // 新しいリクエストのために新しいコントローラーを作成し、refに保存します。
     const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
-      const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`, { signal: controller.signal });
+      const response = await fetch(
+        `/api/search?query=${encodeURIComponent(query)}`,
+        { signal: controller.signal }
+      );
       const data = await response.json();
       if (!Array.isArray(data.images)) throw new Error("Invalid response");
       setImages(data.images);
       setCurrentIndex(0);
     } catch (error) {
+      // AbortErrorは、新しい検索が前の検索をキャンセルしたときに発生することが想定されるため、無視します。
       if (error instanceof Error && error.name !== "AbortError") {
         console.error("Error fetching images:", error);
       }
@@ -55,19 +69,16 @@ function App() {
     img.onerror = () => {
       if (isCancelled) return;
       console.warn(`Image failed to load, removing: ${imageUrl}`);
-      setImages((prevImages) => {
-        const newImages = prevImages.filter((_, i) => i !== currentIndex);
-        // currentIndexが範囲外になった場合は0にリセット
-        if (currentIndex >= newImages.length && newImages.length > 0) {
-          setCurrentIndex(0);
-        }
-        return newImages;
-      });
+      setImages((prevImages) =>
+        prevImages.filter((_, i) => i !== currentIndex)
+      );
     };
     img.src = imageUrl;
 
     // クリーンアップ関数
-    return () => { isCancelled = true; };
+    return () => {
+      isCancelled = true;
+    };
   }, [currentIndex, images]); // imagesも依存配列に含めることが重要
 
   // 次の画像をプリロード

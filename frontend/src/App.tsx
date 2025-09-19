@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "./App.module.css";
 
 function App() {
@@ -7,10 +7,8 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSearch = async () => {
-    console.log("Search button clicked.");
     if (!query) return;
 
-    console.log(`Fetching images for query: ${query}`);
     try {
       const response = await fetch(`/api/search?query=${query}`);
       const data = await response.json();
@@ -21,25 +19,46 @@ function App() {
     }
   };
 
+  const advanceSlide = useCallback(() => {
+    if (images.length === 0) return;
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  }, [images.length]);
+
   useEffect(() => {
-    console.log("useEffect called.");
-    if (images.length === 0) {
-      console.log("No images to display.");
+    // スライドショーのタイマー設定
+    if (images.length <= 1) return; // 1枚以下の場合はスライドショー不要
+
+    const interval = setInterval(advanceSlide, 3000);
+    return () => clearInterval(interval);
+  }, [images.length, advanceSlide]);
+
+  useEffect(() => {
+    // 現在の画像の有効性をチェック
+    if (images.length === 0) return;
+
+    // currentIndexが配列の範囲外になった場合、0にリセット
+    if (currentIndex >= images.length) {
+      setCurrentIndex(0);
       return;
     }
 
-    console.log("Setting up interval for slideshow.");
-    const interval = setInterval(() => {
-      console.log("Interval triggered.");
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000);
-    console.log("Interval setup.");
+    const imageUrl = images[currentIndex];
+    if (!imageUrl) return;
 
-    return () => {
-      console.log("useEffect cleanup.");
-      clearInterval(interval);
+    let isCancelled = false;
+    const img = new Image();
+    // 画像が有効な場合は何もしない
+    img.onload = () => {};
+    img.onerror = () => {
+      if (isCancelled) return;
+      console.warn(`Image failed to load, removing: ${imageUrl}`);
+      setImages((prevImages) => prevImages.filter((_, i) => i !== currentIndex));
     };
-  }, [images]);
+    img.src = imageUrl;
+
+    // クリーンアップ関数
+    return () => { isCancelled = true; };
+  }, [currentIndex, images]); // imagesも依存配列に含めることが重要
 
   return (
     <div className={styles["slideshow-container"]}>
@@ -55,8 +74,9 @@ function App() {
           Search
         </button>
       </div>
-      {images.length > 0 && (
+      {images.length > 0 && images[currentIndex] && (
         <img
+          key={images[currentIndex]} // keyをsrcに連動させることで、画像が切り替わる際に再マウントを促す
           src={images[currentIndex]}
           alt="Slideshow"
           className={styles["slideshow-image"]}

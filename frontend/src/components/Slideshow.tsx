@@ -1,16 +1,16 @@
 import { useEffect, memo } from "react";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface SlideshowProps {
   images: string[];
   currentIndex: number;
   onAdvanceSlide: () => void;
   onImageError: (index: number) => void;
-  animation: string;
-  interval: number;
 }
 
-const SlideshowComponent = ({ images, currentIndex, onAdvanceSlide, onImageError, animation, interval }: SlideshowProps) => {
+const SlideshowComponent = ({ images, currentIndex, onAdvanceSlide, onImageError }: SlideshowProps) => {
   console.log("Slideshow component rendered");
+  const { animation, interval } = useSettings();
   // スライドショーのタイマー設定
   useEffect(() => {
     console.log("Slideshow timer effect triggered");

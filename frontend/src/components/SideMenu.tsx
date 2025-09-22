@@ -17,22 +17,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface SideMenuProps {
   query: string;
   onQueryChange: (value: string) => void;
   onSearch: () => void;
   isLoading: boolean;
-  interval: number;
-  onIntervalChange: (value: number) => void;
-  animation: string;
-  onAnimationChange: (value: string) => void;
-  numImages: number;
-  onNumImagesChange: (value: number) => void;
 }
 
 export function SideMenu(props: SideMenuProps) {
   console.log("SideMenu component rendered");
+  const { numImages, setNumImages, interval, setInterval, animation, setAnimation } = useSettings();
+
   return (
     <div className="absolute top-5 left-5 z-20">
       <Sheet>
@@ -41,7 +38,7 @@ export function SideMenu(props: SideMenuProps) {
             <Menu className="h-4 w-4" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-2">
+        <SheetContent side="left" className="p-6">
           <SheetHeader>
             <SheetTitle>Image Search</SheetTitle>
           </SheetHeader>
@@ -54,30 +51,30 @@ export function SideMenu(props: SideMenuProps) {
             />
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="numImages">Number of Images ({props.numImages})</Label>
+                <Label htmlFor="numImages">Number of Images ({numImages})</Label>
                 <Slider
                   id="numImages"
                   min={10}
                   max={100}
                   step={10}
-                  value={[props.numImages]}
-                  onValueChange={(value) => props.onNumImagesChange(value[0])}
+                  value={[numImages]}
+                  onValueChange={(value) => setNumImages(value[0])}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="interval">Interval ({props.interval / 1000}s)</Label>
+                <Label htmlFor="interval">Interval ({interval / 1000}s)</Label>
                 <Slider
                   id="interval"
                   min={1000}
                   max={10000}
                   step={500}
-                  value={[props.interval]}
-                  onValueChange={(value) => props.onIntervalChange(value[0])}
+                  value={[interval]}
+                  onValueChange={(value) => setInterval(value[0])}
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="animation">Animation</Label>
-                <Select value={props.animation} onValueChange={props.onAnimationChange}>
+                <Select value={animation} onValueChange={setAnimation}>
                   <SelectTrigger id="animation">
                     <SelectValue placeholder="Select animation" />
                   </SelectTrigger>

@@ -2,14 +2,13 @@ import { useState, useCallback, useRef } from "react";
 import { SideMenu } from "./components/SideMenu";
 import { Slideshow } from "./components/Slideshow";
 import { searchImages } from "./lib/api";
-import { useCookieState } from "./hooks/useCookieState";
+import { useSettings } from "./contexts/SettingsContext";
+
 function App() {
   console.log("App component rendered");
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [interval, setInterval] = useCookieState("slideshowInterval", 3000);
-  const [animation, setAnimation] = useCookieState("slideshowAnimation", "fade-in");
-  const [numImages, setNumImages] = useCookieState("slideshowNumImages", 10);
+  const { numImages } = useSettings();
 
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -63,24 +62,13 @@ function App() {
   return (
     <div className="relative flex justify-center items-center h-screen w-screen">
       <SideMenu
-        query={query}
-        onQueryChange={setQuery}
-        onSearch={handleSearch}
-        isLoading={isLoading}
-        interval={interval}
-        onIntervalChange={setInterval}
-        animation={animation}
-        onAnimationChange={setAnimation}
-        numImages={numImages}
-        onNumImagesChange={setNumImages}
+        query={query} onQueryChange={setQuery} onSearch={handleSearch} isLoading={isLoading}
       />
       <Slideshow
         images={images}
         currentIndex={currentIndex}
         onAdvanceSlide={advanceSlide}
         onImageError={handleImageError}
-        animation={animation}
-        interval={interval}
       />
     </div>
   );

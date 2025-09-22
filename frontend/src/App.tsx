@@ -9,6 +9,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [interval, setInterval] = useCookieState("slideshowInterval", 3000);
   const [animation, setAnimation] = useCookieState("slideshowAnimation", "fade-in");
+  const [numImages, setNumImages] = useCookieState("slideshowNumImages", 10);
 
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,7 +30,7 @@ function App() {
 
     setIsLoading(true);
     try {
-      const fetchedImages = await searchImages(query, controller.signal);
+      const fetchedImages = await searchImages(query, controller.signal, numImages);
       setImages(fetchedImages);
       setCurrentIndex(0);
     } catch (error) {
@@ -70,6 +71,8 @@ function App() {
         onIntervalChange={setInterval}
         animation={animation}
         onAnimationChange={setAnimation}
+        numImages={numImages}
+        onNumImagesChange={setNumImages}
       />
       <Slideshow
         images={images}

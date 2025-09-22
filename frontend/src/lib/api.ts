@@ -1,8 +1,9 @@
 export async function searchImages(
   query: string,
-  signal: AbortSignal
+  signal: AbortSignal,
+  num: number
 ): Promise<string[]> {
-  const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`, {
+  const response = await fetch(`/api/search?query=${encodeURIComponent(query)}&num=${num}`, {
     signal,
   });
 

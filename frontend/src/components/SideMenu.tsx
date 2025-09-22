@@ -27,6 +27,8 @@ interface SideMenuProps {
   onIntervalChange: (value: number) => void;
   animation: string;
   onAnimationChange: (value: string) => void;
+  numImages: number;
+  onNumImagesChange: (value: number) => void;
 }
 
 export function SideMenu(props: SideMenuProps) {
@@ -44,13 +46,29 @@ export function SideMenu(props: SideMenuProps) {
             <SheetTitle>Image Search</SheetTitle>
           </SheetHeader>
            <div className="grid gap-4 py-4">
-            <SearchForm {...props} />
+            <SearchForm
+              query={props.query}
+              onQueryChange={props.onQueryChange}
+              onSearch={props.onSearch}
+              isLoading={props.isLoading}
+            />
             <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="numImages">Number of Images ({props.numImages})</Label>
+                <Slider
+                  id="numImages"
+                  min={10}
+                  max={100}
+                  step={10}
+                  value={[props.numImages]}
+                  onValueChange={(value) => props.onNumImagesChange(value[0])}
+                />
+              </div>
               <div className="grid gap-2">
                 <Label htmlFor="interval">Interval ({props.interval / 1000}s)</Label>
                 <Slider
                   id="interval"
-                  min={2000}
+                  min={1000}
                   max={10000}
                   step={500}
                   value={[props.interval]}

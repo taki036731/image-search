@@ -95,14 +95,15 @@ function App() {
  
   return (
     <div className="relative flex justify-center items-center h-screen w-screen">
-      <div className="absolute bottom-5 left-5 z-10 flex w-full max-w-sm items-center space-x-2">
+      <div className="absolute bottom-0 left-0 p-5 z-10 flex w-full max-w-sm items-center">
         <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for images..."
+          className="rounded-r-none focus-visible:ring-offset-0"
         />
-        <Button onClick={handleSearch}>
+        <Button onClick={handleSearch} className="rounded-l-none">
           Search
         </Button>
       </div>

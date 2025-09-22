@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
-export interface SearchFormProps {
+interface SearchFormProps {
   isLoading: boolean;
   query: string;
   onQueryChange: (value: string) => void;

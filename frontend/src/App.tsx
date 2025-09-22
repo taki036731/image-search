@@ -6,6 +6,8 @@ function App() {
   console.log("App component rendered");
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [interval, setInterval] = useState(3000);
+  const [animation, setAnimation] = useState("fade-in");
 
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -58,12 +60,23 @@ function App() {
  
   return (
     <div className="relative flex justify-center items-center h-screen w-screen">
-      <SideMenu query={query} onQueryChange={setQuery} onSearch={handleSearch} isLoading={isLoading} />
+      <SideMenu
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        isLoading={isLoading}
+        interval={interval}
+        onIntervalChange={setInterval}
+        animation={animation}
+        onAnimationChange={setAnimation}
+      />
       <Slideshow
         images={images}
         currentIndex={currentIndex}
         onAdvanceSlide={advanceSlide}
         onImageError={handleImageError}
+        animation={animation}
+        interval={interval}
       />
     </div>
   );

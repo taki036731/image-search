@@ -5,18 +5,20 @@ interface SlideshowProps {
   currentIndex: number;
   onAdvanceSlide: () => void;
   onImageError: (index: number) => void;
+  animation: string;
+  interval: number;
 }
 
-export function Slideshow({ images, currentIndex, onAdvanceSlide, onImageError }: SlideshowProps) {
+export function Slideshow({ images, currentIndex, onAdvanceSlide, onImageError, animation, interval }: SlideshowProps) {
   console.log("Slideshow component rendered");
   // スライドショーのタイマー設定
   useEffect(() => {
     console.log("Slideshow timer effect triggered");
     if (images.length <= 1) return;
 
-    const interval = setInterval(onAdvanceSlide, 3000);
-    return () => clearInterval(interval);
-  }, [images.length, onAdvanceSlide]);
+    const timer = setInterval(onAdvanceSlide, interval);
+    return () => clearInterval(timer);
+  }, [images.length, onAdvanceSlide, interval]);
 
   // 現在の画像の有効性をチェック
   useEffect(() => {
@@ -54,7 +56,7 @@ export function Slideshow({ images, currentIndex, onAdvanceSlide, onImageError }
       key={currentImage}
       src={currentImage}
       alt="Slideshow"
-      className="w-full h-full object-contain animate-in fade-in duration-500"
+      className={`w-full h-full object-contain animate-in duration-500 ${animation}`}
     />
   );
 }

@@ -1,23 +1,16 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+import { SideMenu } from "./components/SideMenu";
+import { Slideshow } from "./components/Slideshow";
 
 function App() {
+  console.log("App component rendered");
   const [query, setQuery] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleSearch = async () => {
+    console.log("handleSearch called with query:", query);
     if (!query.trim()) return;
 
     // 以前の検索による進行中のfetchがあれば、それを中断します。
@@ -47,23 +40,38 @@ function App() {
   };
 
   const advanceSlide = useCallback(() => {
+    console.log("advanceSlide called");
     if (images.length === 0) return;
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   }, [images.length]);
 
-  useEffect(() => {
-    // スライドショーのタイマー設定
-    if (images.length <= 1) return; // 1枚以下の場合はスライドショー不要
+  const handleImageError = useCallback((errorIndex: number) => {
+    console.log("handleImageError called for index:", errorIndex);
+    setImages((prevImages) => prevImages.filter((_, i) => i !== errorIndex));
+    // エラー画像が現在の画像より前の場合、インデックスを調整する必要がある
+    if (errorIndex < currentIndex) {
+      setCurrentIndex(prev => prev - 1);
+    } else if (errorIndex === currentIndex && errorIndex >= images.length - 1) {
+      // 最後の画像を削除した場合、インデックスをリセット
+      setCurrentIndex(0);
+    }
+  }, [currentIndex, images.length]);
+ 
+  return (
+    <div className="relative flex justify-center items-center h-screen w-screen">
+      <SideMenu query={query} onQueryChange={setQuery} onSearch={handleSearch} />
+      <Slideshow
+        images={images}
+        currentIndex={currentIndex}
+        onAdvanceSlide={advanceSlide}
+        onImageError={handleImageError}
+      />
+    </div>
+  );
+}
 
-    const interval = setInterval(advanceSlide, 3000);
-    return () => clearInterval(interval);
-  }, [images.length, advanceSlide]);
-
-  useEffect(() => {
-    // 現在の画像の有効性をチェック
-    if (images.length === 0) return;
-
-    // currentIndexが配列の範囲外になった場合、0にリセット
+export default App;
+/*
     if (currentIndex >= images.length) {
       setCurrentIndex(0);
       return;
@@ -154,3 +162,4 @@ function App() {
 }
 
 export default App;
+*/

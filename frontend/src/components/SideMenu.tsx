@@ -39,7 +39,7 @@ export function SideMenu(props: SideMenuProps) {
             <Menu className="h-4 w-4" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className="p-2">
           <SheetHeader>
             <SheetTitle>Image Search</SheetTitle>
           </SheetHeader>

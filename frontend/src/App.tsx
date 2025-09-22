@@ -2,12 +2,13 @@ import { useState, useCallback, useRef } from "react";
 import { SideMenu } from "./components/SideMenu";
 import { Slideshow } from "./components/Slideshow";
 import { searchImages } from "./lib/api";
+import { useCookieState } from "./hooks/useCookieState";
 function App() {
   console.log("App component rendered");
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [interval, setInterval] = useState(3000);
-  const [animation, setAnimation] = useState("fade-in");
+  const [interval, setInterval] = useCookieState("slideshowInterval", 3000);
+  const [animation, setAnimation] = useCookieState("slideshowAnimation", "fade-in");
 
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);

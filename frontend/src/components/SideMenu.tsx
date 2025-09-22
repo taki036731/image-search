@@ -8,16 +8,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import { SearchForm } from "./SearchForm";
+import { SearchForm, type SearchFormProps } from "./SearchForm";
 
- interface SideMenuProps {
-  query: string;
-  onQueryChange: (value: string) => void;
-  onSearch: () => void;
-  isLoading: boolean;
-}
-
-export function SideMenu({ query, onQueryChange, onSearch, isLoading }: SideMenuProps) {
+export function SideMenu({ query, onQueryChange, onSearch, isLoading }: SearchFormProps) {
   console.log("SideMenu component rendered");
   return (
     <div className="absolute top-5 left-5 z-20">

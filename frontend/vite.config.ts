@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     build: {
       // 開発ビルドではソースマップを有効にし、本番ビルドではセキュリティのため非表示に
       sourcemap: isProduction ? 'hidden' : true,
-      // 開発ビルdではデバッグしやすいようにminifyしない
+      // 開発ビルドではデバッグしやすいようにminifyしない
       minify: isProduction ? 'esbuild' : false,
       // 本番ビルドの時だけconsoleとdebuggerを削除
       esbuild: {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 
 interface SlideshowProps {
   images: string[];
@@ -9,7 +9,7 @@ interface SlideshowProps {
   interval: number;
 }
 
-export function Slideshow({ images, currentIndex, onAdvanceSlide, onImageError, animation, interval }: SlideshowProps) {
+const SlideshowComponent = ({ images, currentIndex, onAdvanceSlide, onImageError, animation, interval }: SlideshowProps) => {
   console.log("Slideshow component rendered");
   // スライドショーのタイマー設定
   useEffect(() => {
@@ -60,3 +60,5 @@ export function Slideshow({ images, currentIndex, onAdvanceSlide, onImageError, 
     />
   );
 }
+
+export const Slideshow = memo(SlideshowComponent);

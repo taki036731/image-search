@@ -1,28 +1,21 @@
+@import "tailwindcss";
+
 .search-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 10;
+    @apply fixed bottom-5 left-5 z-10 flex;
 }
 
 .search-input {
-    padding: 10px;
+    @apply px-2.5 py-1 bg-gray-700 text-white border border-gray-600 rounded-l-md rounded-r-none focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
 
 .search-button {
-    padding: 10px 15px;
+    @apply ml-[-1px] py-1 px-[15px] bg-blue-600 text-white font-semibold rounded-l-none rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
 
 .slideshow-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
+    @apply flex items-center justify-center h-screen w-screen;
 }
 
 .slideshow-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    @apply w-full h-full object-contain;
 }

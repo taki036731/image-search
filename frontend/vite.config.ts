@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -8,6 +9,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
     build: {
       // 開発ビルドではソースマップを有効にし、本番ビルドではセキュリティのため非表示に
       sourcemap: isProduction ? 'hidden' : true,

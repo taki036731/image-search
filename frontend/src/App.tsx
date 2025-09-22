@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import styles from "./App.module.css";
+import {Input} from "@/components/ui/input"
+import {Button} from "@/components/ui/button"
 
 function App() {
   const [query, setQuery] = useState("");
@@ -91,27 +92,26 @@ function App() {
     img.src = nextImageUrl;
     // クリーンアップ不要（GCに任せる）
   }, [currentIndex, images]);
-
+ 
   return (
-    <div className={styles["slideshow-container"]}>
-      <div className={styles["search-container"]}>
-        <input
+    <div className="relative flex justify-center items-center h-screen w-screen">
+      <div className="absolute bottom-5 left-5 z-10 flex w-full max-w-sm items-center space-x-2">
+        <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for images..."
-          className={styles["search-input"]}
         />
-        <button onClick={handleSearch} className={styles["search-button"]}>
+        <Button onClick={handleSearch}>
           Search
-        </button>
+        </Button>
       </div>
       {images.length > 0 && images[currentIndex] && (
         <img
           key={images[currentIndex]} // keyをsrcに連動させることで、画像が切り替わる際に再マウントを促す
           src={images[currentIndex]}
           alt="Slideshow"
-          className={styles["slideshow-image"]}
+          className="w-full h-full object-contain animate-in fade-in duration-500"
         />
       )}
     </div>

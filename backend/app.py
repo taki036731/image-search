@@ -56,8 +56,7 @@ def search_images():
                                            params=params,
                                            timeout=REQUEST_TIMEOUT)
                     response.raise_for_status()
-                    data = response.json()
-                    items = data.get('items', [])
+                    items = response.json().get('items', [])
                     return [item['link'] for item in items if 'link' in item]
                 except requests.exceptions.RequestException as e:
                     logging.error(
@@ -95,5 +94,6 @@ def serve(url_path):
 
 
 if __name__ == '__main__':
+    # 本番環境ではdebug=Falseに設定してください
     app.run(debug=True)
 #

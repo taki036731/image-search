@@ -10,13 +10,14 @@ import {
 import { Menu } from "lucide-react";
 import { SearchForm } from "./SearchForm";
 
-interface SideMenuProps {
+ interface SideMenuProps {
   query: string;
   onQueryChange: (value: string) => void;
   onSearch: () => void;
+  isLoading: boolean;
 }
 
-export function SideMenu({ query, onQueryChange, onSearch }: SideMenuProps) {
+export function SideMenu({ query, onQueryChange, onSearch, isLoading }: SideMenuProps) {
   console.log("SideMenu component rendered");
   return (
     <div className="absolute top-5 left-5 z-20">
@@ -33,8 +34,8 @@ export function SideMenu({ query, onQueryChange, onSearch }: SideMenuProps) {
               Enter a search term to start the slideshow.
             </SheetDescription>
           </SheetHeader>
-          <div className="grid gap-4 py-4">
-            <SearchForm query={query} onQueryChange={onQueryChange} onSearch={onSearch} />
+           <div className="grid gap-4 py-4">
+            <SearchForm query={query} onQueryChange={onQueryChange} onSearch={onSearch} isLoading={isLoading} />
             <div className="grid gap-2">
               <a href="#" className="p-2 hover:bg-accent rounded-md">Home</a>
               <a href="#" className="p-2 hover:bg-accent rounded-md">Settings</a>

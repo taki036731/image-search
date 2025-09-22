@@ -2,17 +2,18 @@ import { useState, useCallback, useRef } from "react";
 import { SideMenu } from "./components/SideMenu";
 import { Slideshow } from "./components/Slideshow";
 import { searchImages } from "./lib/api";
-
 function App() {
   console.log("App component rendered");
   const [query, setQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const [images, setImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleSearch = async () => {
     console.log("handleSearch called with query:", query);
-    if (!query.trim()) return;
+    if (!query.trim() || isLoading) return;
 
     // 以前の検索による進行中のfetchがあれば、それを中断します。
     if (abortControllerRef.current) {
@@ -23,15 +24,17 @@ function App() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    setIsLoading(true);
     try {
       const fetchedImages = await searchImages(query, controller.signal);
       setImages(fetchedImages);
       setCurrentIndex(0);
     } catch (error) {
-      // AbortErrorは、新しい検索が前の検索をキャンセルしたときに発生することが想定されるため、無視します。
       if (error instanceof Error && error.name !== "AbortError") {
         console.error("Error fetching images:", error);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,7 +58,7 @@ function App() {
  
   return (
     <div className="relative flex justify-center items-center h-screen w-screen">
-      <SideMenu query={query} onQueryChange={setQuery} onSearch={handleSearch} />
+      <SideMenu query={query} onQueryChange={setQuery} onSearch={handleSearch} isLoading={isLoading} />
       <Slideshow
         images={images}
         currentIndex={currentIndex}

@@ -5,6 +5,7 @@ import requests
 import concurrent.futures
 import logging
 from werkzeug.utils import safe_join
+import math
 
 # ロギングの設定: アプリケーションの動作状況やエラーを記録します
 logging.basicConfig(level=logging.INFO,
@@ -15,7 +16,6 @@ app = Flask(__name__, static_folder='../frontend/dist', static_url_path='')
 load_dotenv()
 
 # 設定値を定数として定義し、管理しやすくします
-NUM_PAGES = 3
 MAX_WORKERS = 10
 REQUEST_TIMEOUT = 5
 MAX_QUERY_LENGTH = 100
@@ -24,11 +24,19 @@ MAX_QUERY_LENGTH = 100
 @app.route('/api/search', methods=['GET'])
 def search_images():
     query = request.args.get('query')
+    num_str = request.args.get('num', '10')
+
     if not query:
         return jsonify({'error': 'Query parameter is missing'}), 400
 
     if len(query) > MAX_QUERY_LENGTH:
         return jsonify({'error': f'Query parameter exceeds maximum length of {MAX_QUERY_LENGTH} characters'}), 400
+    
+    try:
+        num_images = int(num_str)
+        num_images = max(10, min(100, num_images)) # 10-100の範囲に収める
+    except ValueError:
+        return jsonify({'error': 'Invalid number of images specified'}), 400
 
     api_key = os.getenv('GOOGLE_API_KEY')
     cse_id = os.getenv('GOOGLE_CSE_ID')
@@ -37,6 +45,7 @@ def search_images():
         logging.error("Google API key or Custom Search Engine ID is missing.")
         return jsonify({'error': 'Google API key or Custom Search Engine ID is missing.'}), 500
 
+    num_pages = math.ceil(num_images / 10)
     all_images = []
     try:
         # パフォーマンス向上のため、単一のSessionを共有してコネクションを再利用します
@@ -65,12 +74,13 @@ def search_images():
 
             # ThreadPoolExecutorを使用してリクエストを並列実行
             with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-                start_indices = [i * 10 + 1 for i in range(NUM_PAGES)]
+                start_indices = [i * 10 + 1 for i in range(num_pages)]
                 results = executor.map(fetch_page, start_indices)
                 for image_list in results:
                     all_images.extend(image_list)
 
-        logging.info(f"Fetched {len(all_images)} images for query '{query}'")
+        all_images = all_images[:num_images] # 指定された数に切り詰める
+        logging.info(f"Returning {len(all_images)} images for query '{query}'")
         return jsonify({'images': all_images})
     except Exception as e:
         # より詳細なエラーハンドリングが望ましい

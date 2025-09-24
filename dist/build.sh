@@ -8,6 +8,8 @@ fi
 
 echo "Building the app..."
 mkdir app
+cp Dockerfile entrypoint.sh app
+
 cd app || exit
 
 mkdir backend

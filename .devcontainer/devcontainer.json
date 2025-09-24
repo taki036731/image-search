@@ -24,7 +24,8 @@
                 "google.gemini-cli-vscode-ide-companion",
                 "google.geminicodeassist",
                 "tuttieee.emacs-mcx",
-                "bradlc.vscode-tailwindcss"
+                "bradlc.vscode-tailwindcss",
+                "foxundermoon.shell-format"
             ]
         }
     }

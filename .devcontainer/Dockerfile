@@ -2,7 +2,8 @@ FROM mcr.microsoft.com/devcontainers/python:2.0-3.13-trixie
 
 RUN apt-get update && apt-get install -y \
     nodejs \
-    npm
+    npm \
+    shfmt
 
 RUN npm install -g n && n latest
 

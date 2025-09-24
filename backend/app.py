@@ -104,6 +104,8 @@ def serve(url_path):
 
 
 if __name__ == '__main__':
-    # 本番環境ではdebug=Falseに設定してください
-    app.run(debug=True)
+    # 環境変数 'FLASK_DEBUG' が '1' または 'true' (大文字小文字を問わない) の場合にデバッグモードを有効にします
+    # 未設定の場合はデフォルトで False になります
+    is_debug = os.getenv('FLASK_DEBUG', 'false').lower() in ('true', '1')
+    app.run(debug=is_debug)
 #

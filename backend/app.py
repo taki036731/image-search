@@ -6,6 +6,9 @@ import concurrent.futures
 import logging
 from werkzeug.utils import safe_join
 import math
+from lib.verify_token import verify_token # 追加: トークン検証用のモジュールをインポート
+from firebase_admin import credentials
+import firebase_admin
 
 # ロギングの設定: アプリケーションの動作状況やエラーを記録します
 logging.basicConfig(level=logging.INFO,
@@ -20,8 +23,19 @@ MAX_WORKERS = 10
 REQUEST_TIMEOUT = 5
 MAX_QUERY_LENGTH = 100
 
+if os.getenv('FIREBASE_ADMIN_CREDENTIALS'):
+    cred_path = os.getenv('FIREBASE_ADMIN_CREDENTIALS')
+    if os.path.isfile(cred_path):
+        cred = credentials.Certificate(cred_path)
+        firebase_admin.initialize_app(cred)
+        logging.info("Firebase Admin SDK initialized successfully.")
+    else:
+        logging.error(
+            f"Firebase Admin credentials file not found at: {cred_path}")
+
 
 @app.route('/api/search', methods=['GET'])
+@verify_token  # 追加: このエンドポイントにアクセスする前にトークンを検証します
 def search_images():
     query = request.args.get('query')
     num_str = request.args.get('num', '10')

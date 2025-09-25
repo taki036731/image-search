@@ -2,6 +2,8 @@
 
 echo "Building the project..."
 
+cd ../frontend && npm run build && cd -
+
 if [ -d "app" ]; then
 	rm -rf app
 fi
@@ -15,7 +17,7 @@ cd app || exit
 mkdir backend
 cp ../../backend/app.py backend/
 cp ../../backend/requirements.txt backend/
-cp ../../backend/.env backend/
+# cp ../../backend/.env backend/
 echo >> backend/requirements.txt
 echo "gunicorn" >> backend/requirements.txt
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd app && gcloud run deploy image-search-app \
+cd app && gcloud run deploy ${YOUR_APP_NAME} \
 	--source . \
 	--platform managed \
 	--region asia-east1 \

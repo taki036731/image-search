@@ -18,8 +18,8 @@ mkdir backend
 cp -a ../../backend/lib backend/lib
 cp ../../backend/app.py backend/
 cp ../../backend/requirements.txt backend/
-cp ../../backend/image-search-a9717-firebase-adminsdk-fbsvc-0a7f58bdd4.json backend/
-echo FIREBASE_ADMIN_CREDENTIALS=image-search-a9717-firebase-adminsdk-fbsvc-0a7f58bdd4.json >> backend/.env
+cp ../../backend/firebase_credential.json backend/
+echo FIREBASE_ADMIN_CREDENTIALS=firebase_credential.json >> backend/.env
 # cp ../../backend/.env backend/
 echo >> backend/requirements.txt
 echo "gunicorn" >> backend/requirements.txt

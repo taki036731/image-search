@@ -1,3 +1,5 @@
 __pycache__
 .env
 dist/app/
+firebase_credential.json
+dist/deploy.sh
